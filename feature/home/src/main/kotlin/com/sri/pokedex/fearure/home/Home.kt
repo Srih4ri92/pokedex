@@ -15,6 +15,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardColors
@@ -35,21 +36,32 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.content.ContextCompat
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.kmpalette.palette.graphics.Palette
+import com.skydoves.landscapist.glide.GlideImage
 import com.sri.pokedex.compose.designsystem.R
+import com.sri.pokedex.core.data.repository.home.FakeHomeReopsitory
 import com.sri.pokedex.core.designsystem.component.PokedexAppbar
 import com.sri.pokedex.core.designsystem.component.PokedexText
 import com.sri.pokedex.core.designsystem.theme.PokedexTheme
+import com.sri.pokedex.core.model.Pokemon
+import com.sri.pokedex.core.preview.PreviewUtils
 
 @Composable
 fun SharedTransitionScope.Home(
     animatedVisibilityScope: AnimatedVisibilityScope,
+    viewModel: HomeViewModel = hiltViewModel(),
     modifier: Modifier = Modifier
 ) {
+    val uiState = viewModel.uiState.collectAsStateWithLifecycle()
+    val pokemonList = viewModel.pokemonList.collectAsStateWithLifecycle()
     Column {
         PokedexAppbar()
         HomeContent(
-            animatedVisibilityScope = animatedVisibilityScope
+            animatedVisibilityScope = animatedVisibilityScope,
+            pokemonList = pokemonList.value
         )
     }
 }
@@ -57,15 +69,19 @@ fun SharedTransitionScope.Home(
 @Composable
 fun SharedTransitionScope.HomeContent(
     animatedVisibilityScope: AnimatedVisibilityScope,
+    pokemonList: List<Pokemon>,
     modifier: Modifier = Modifier
 ) {
     Box(
         modifier = modifier.fillMaxSize()
     ){
         LazyVerticalGrid(columns = GridCells.Fixed(2)) {
-            items(50){
-                HomeCard(animatedVisibilityScope = animatedVisibilityScope)
-            }
+           items(pokemonList){pokemon ->
+               HomeCard(
+                   animatedVisibilityScope = animatedVisibilityScope,
+                   pokemon = pokemon
+               )
+           }
         }
     }
 }
@@ -73,6 +89,7 @@ fun SharedTransitionScope.HomeContent(
 @Composable
 fun SharedTransitionScope.HomeCard(
     animatedVisibilityScope: AnimatedVisibilityScope,
+    pokemon: Pokemon,
     modifier: Modifier = Modifier
 ) {
     val context = LocalContext.current
@@ -96,19 +113,14 @@ fun SharedTransitionScope.HomeCard(
             disabledContainerColor = backgroundColor
         )
     ) {
-        Image(
-            modifier = Modifier
-                .align(Alignment.CenterHorizontally)
-                .padding(top = 20.dp)
-                .size(120.dp),
-            painter = painterResource(id = R.drawable.pokemon_preview),
-            contentDescription = ""
-//            imageModel = { previewImage }
-        )
+       GlideImage(
+           imageModel = {pokemon.imageUrl},
+           previewPlaceholder = painterResource(id = R.drawable.pokemon_preview)
+       )
 
         PokedexText(
-            text = "Bulbasaur",
-            previewText = "Bulbasaur",
+            text = pokemon.name,
+            previewText = pokemon.name,
             fontSize = 16.sp,
             color = PokedexTheme.colors.black,
             textAlign = TextAlign.Center,
@@ -129,7 +141,8 @@ private fun PokedexHomeLightPreview() {
         SharedTransitionScope{
             AnimatedVisibility(visible = true) {
                 Home(
-                    animatedVisibilityScope = this
+                    animatedVisibilityScope = this,
+                    viewModel = HomeViewModel(homeRepository = FakeHomeReopsitory())
                 )
             }
         }
@@ -143,7 +156,8 @@ private fun PokedexHomeDarkPreview() {
         SharedTransitionScope{
             AnimatedVisibility(visible = true) {
                 Home(
-                    animatedVisibilityScope = this
+                    animatedVisibilityScope = this,
+                    viewModel = HomeViewModel(homeRepository = FakeHomeReopsitory())
                 )
             }
         }
@@ -157,7 +171,8 @@ private fun PokedexHomeContentLightPreview() {
         SharedTransitionScope {
             AnimatedVisibility(visible = true) {
                 HomeContent(
-                    animatedVisibilityScope = this
+                    animatedVisibilityScope = this,
+                    pokemonList = PreviewUtils.mockPokemonList(),
                 )
             }
         }
@@ -171,7 +186,8 @@ private fun PokedexHomeContentDarkPreview() {
         SharedTransitionScope {
             AnimatedVisibility(visible = true) {
                 HomeContent(
-                    animatedVisibilityScope = this
+                    animatedVisibilityScope = this,
+                    pokemonList = PreviewUtils.mockPokemonList()
                 )
             }
         }
@@ -184,7 +200,10 @@ private fun PokedexCardLightPreview() {
     PokedexTheme{
         SharedTransitionScope {
             AnimatedVisibility(visible = true) {
-                HomeCard(animatedVisibilityScope = this)
+                HomeCard(
+                    animatedVisibilityScope = this,
+                    pokemon = PreviewUtils.mockPokemon()
+                )
             }
         }
     }
@@ -196,7 +215,10 @@ private fun PokedexCardDarkPreview() {
     PokedexTheme{
         SharedTransitionScope {
             AnimatedVisibility(visible = true) {
-                HomeCard(animatedVisibilityScope = this)
+                HomeCard(
+                    animatedVisibilityScope = this,
+                    pokemon = PreviewUtils.mockPokemon()
+                )
             }
         }
     }

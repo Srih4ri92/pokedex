@@ -6,15 +6,11 @@ plugins {
 }
 
 android {
-    namespace = "com.sri.pokedex.compose.feature.home"
+    namespace = "com.skydoves.pokedex.compose.feature.preview"
 }
 
 dependencies {
     // core
     implementation(projects.core.designsystem)
-    implementation(projects.core.viewmodel)
     implementation(projects.core.model)
-    implementation(projects.core.data)
-    implementation(projects.core.preview)
-
 }
