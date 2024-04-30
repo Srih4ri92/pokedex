@@ -7,13 +7,16 @@ import com.sri.pokedex.core.data.repository.home.HomeRepository
 import com.sri.pokedex.core.model.Pokemon
 import com.sri.pokedex.core.viewmodel.BaseViewModel
 import com.sri.pokedex.core.viewmodel.ViewModelStateFlow
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.stateIn
+import javax.inject.Inject
 
-class HomeViewModel(
+@HiltViewModel
+class HomeViewModel @Inject constructor(
     private val homeRepository: HomeRepository
 ): BaseViewModel() {
 

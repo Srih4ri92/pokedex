@@ -16,8 +16,9 @@ import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.onCompletion
 import kotlinx.coroutines.flow.onStart
+import javax.inject.Inject
 
-class HomeRepositoryImpl(
+class HomeRepositoryImpl @Inject constructor(
     private val pokedexClient: PokedexClient,
     private val pokemonDao: PokemonDao,
     @Dispatcher(PokedexAppDispatchers.IO) private val ioDispatcher: CoroutineDispatcher,
