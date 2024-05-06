@@ -1,7 +1,6 @@
 package com.sri.pokedex.fearure.home
 
 import android.content.res.Configuration
-import android.graphics.drawable.BitmapDrawable
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.AnimatedVisibilityScope
 import androidx.compose.animation.SharedTransitionScope
@@ -13,7 +12,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
-import androidx.compose.foundation.lazy.grid.items
+import androidx.compose.foundation.lazy.grid.itemsIndexed
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardColors
@@ -26,9 +25,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalInspectionMode
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
@@ -36,7 +33,6 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.core.content.ContextCompat
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.kmpalette.palette.graphics.Palette
@@ -50,6 +46,7 @@ import com.skydoves.landscapist.placeholder.shimmer.ShimmerPlugin
 import com.sri.pokedex.compose.designsystem.R
 import com.sri.pokedex.core.data.repository.home.FakeHomeReopsitory
 import com.sri.pokedex.core.designsystem.component.PokedexAppbar
+import com.sri.pokedex.core.designsystem.component.PokedexCircularProgress
 import com.sri.pokedex.core.designsystem.component.PokedexText
 import com.sri.pokedex.core.designsystem.theme.PokedexTheme
 import com.sri.pokedex.core.model.Pokemon
@@ -63,46 +60,57 @@ fun SharedTransitionScope.Home(
 ) {
     val uiState = viewModel.uiState.collectAsStateWithLifecycle()
     val pokemonList = viewModel.pokemonList.collectAsStateWithLifecycle()
-    Column {
-        PokedexAppbar()
-        HomeContent(
-            animatedVisibilityScope = animatedVisibilityScope, pokemonList = pokemonList.value
-        )
-    }
-}
-
-@Composable
-fun SharedTransitionScope.HomeContent(
-    animatedVisibilityScope: AnimatedVisibilityScope,
-    pokemonList: List<Pokemon>,
-    modifier: Modifier = Modifier
-) {
-    Box(
-        modifier = modifier.fillMaxSize()
-    ) {
-        LazyVerticalGrid(columns = GridCells.Fixed(2)) {
-            items(pokemonList) { pokemon ->
-                HomeCard(
-                    animatedVisibilityScope = animatedVisibilityScope, pokemon = pokemon
-                )
-            }
+    PokedexTheme{
+        Column {
+            PokedexAppbar()
+            HomeContent(
+                animatedVisibilityScope = animatedVisibilityScope,
+                pokemonList = pokemonList.value,
+                uiState = uiState.value,
+                fetchNextPokemonList = viewModel::fetchNextPokemonList
+            )
         }
     }
 }
 
 @Composable
-fun SharedTransitionScope.HomeCard(
+private fun SharedTransitionScope.HomeContent(
+    animatedVisibilityScope: AnimatedVisibilityScope,
+    pokemonList: List<Pokemon>,
+    modifier: Modifier = Modifier,
+    uiState: HomeUiState,
+    fetchNextPokemonList: () -> Unit,
+) {
+    val threadHold = 8
+    Box(
+        modifier = modifier.fillMaxSize()
+    ) {
+        LazyVerticalGrid(columns = GridCells.Fixed(2)) {
+            itemsIndexed(pokemonList) { index,pokemon ->
+                if ((index + threadHold) >= pokemonList.size && uiState != HomeUiState.Loading) {
+                    fetchNextPokemonList()
+                }
+                HomeCard(
+                    animatedVisibilityScope = animatedVisibilityScope,
+                    pokemon = pokemon
+                )
+            }
+        }
+
+        if (uiState == HomeUiState.Loading) {
+            PokedexCircularProgress()
+        }
+    }
+}
+
+@Composable
+private fun SharedTransitionScope.HomeCard(
     animatedVisibilityScope: AnimatedVisibilityScope,
     pokemon: Pokemon,
     modifier: Modifier = Modifier
 ) {
-    val context = LocalContext.current
     var palette by remember { mutableStateOf<Palette?>(null) }
     val backgroundColor by palette.paletteBackgroundColor()
-    val drawable = ContextCompat.getDrawable(context, R.drawable.pokemon_preview)
-    val bmp = (drawable as BitmapDrawable).bitmap.asImageBitmap()
-    palette = Palette.from(bmp).generate()
-
     Card(
         modifier = modifier
             .fillMaxWidth()
@@ -199,6 +207,8 @@ private fun PokedexHomeContentLightPreview() {
                 HomeContent(
                     animatedVisibilityScope = this,
                     pokemonList = PreviewUtils.mockPokemonList(),
+                    uiState = HomeUiState.Idle,
+                    fetchNextPokemonList = { HomeViewModel(homeRepository = FakeHomeReopsitory()) }
                 )
             }
         }
@@ -212,7 +222,10 @@ private fun PokedexHomeContentDarkPreview() {
         SharedTransitionScope {
             AnimatedVisibility(visible = true) {
                 HomeContent(
-                    animatedVisibilityScope = this, pokemonList = PreviewUtils.mockPokemonList()
+                    animatedVisibilityScope = this,
+                    pokemonList = PreviewUtils.mockPokemonList(),
+                    uiState = HomeUiState.Idle,
+                    fetchNextPokemonList = { HomeViewModel(homeRepository = FakeHomeReopsitory()) }
                 )
             }
         }

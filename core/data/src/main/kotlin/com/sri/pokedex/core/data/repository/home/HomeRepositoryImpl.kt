@@ -1,5 +1,6 @@
 package com.sri.pokedex.core.data.repository.home
 
+import android.util.Log
 import com.skydoves.sandwich.message
 import com.skydoves.sandwich.onFailure
 import com.skydoves.sandwich.suspendOnSuccess
@@ -23,6 +24,8 @@ class HomeRepositoryImpl @Inject constructor(
     private val pokemonDao: PokemonDao,
     @Dispatcher(PokedexAppDispatchers.IO) private val ioDispatcher: CoroutineDispatcher,
 ): HomeRepository {
+    private val TAG: String = "HomeRepository"
+
     override suspend fun fetchPokemonList(
         page: Int,
         onStart: () -> Unit,
@@ -39,6 +42,7 @@ class HomeRepositoryImpl @Inject constructor(
                 pokemonDao.insertPokemonList(pokemonList = pokemons.asEntity())
                 emit(pokemonDao.getAllPokemonList(page).asDomain())
             }.onFailure {
+                Log.d(TAG, "fetchPokemonList: ${message()}")
                 onError(message())
             }
         }else{

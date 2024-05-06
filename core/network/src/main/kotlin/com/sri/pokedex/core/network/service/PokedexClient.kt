@@ -11,8 +11,8 @@ class PokedexClient(
         page: Int
     ): ApiResponse<PokemonResponse> =
         pokedexService.fetchPokemonList(
-            limit = Companion.PAGING_SIZE,
-            offset = page * Companion.PAGING_SIZE,
+            limit = PAGING_SIZE,
+            offset = page * PAGING_SIZE,
         )
 
     companion object {

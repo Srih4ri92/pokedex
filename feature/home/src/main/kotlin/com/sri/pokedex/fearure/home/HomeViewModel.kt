@@ -1,7 +1,6 @@
 package com.sri.pokedex.fearure.home
 
 import androidx.compose.runtime.Stable
-import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.sri.pokedex.core.data.repository.home.HomeRepository
 import com.sri.pokedex.core.model.Pokemon
@@ -40,7 +39,9 @@ class HomeViewModel @Inject constructor(
     )
 
     fun fetchNextPokemonList(){
-        pokemonFetchingIndex.value++
+        if(uiState.value != HomeUiState.Loading) {
+            pokemonFetchingIndex.value++
+        }
     }
 
 }
