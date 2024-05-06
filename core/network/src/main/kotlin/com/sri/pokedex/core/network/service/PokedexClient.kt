@@ -1,6 +1,7 @@
 package com.sri.pokedex.core.network.service
 
 import com.skydoves.sandwich.ApiResponse
+import com.sri.pokedex.core.model.PokemonInfo
 import com.sri.pokedex.core.network.model.PokemonResponse
 
 class PokedexClient(
@@ -13,6 +14,13 @@ class PokedexClient(
         pokedexService.fetchPokemonList(
             limit = PAGING_SIZE,
             offset = page * PAGING_SIZE,
+        )
+
+    suspend fun fetchPokemonDetail(
+        name: String
+    ): ApiResponse<PokemonInfo> =
+        pokedexService.fetchPokemonDetail(
+            name = name
         )
 
     companion object {
