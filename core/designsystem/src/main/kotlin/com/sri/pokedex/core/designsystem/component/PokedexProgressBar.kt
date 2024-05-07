@@ -7,7 +7,6 @@ import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -20,7 +19,6 @@ import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -32,13 +30,11 @@ import androidx.compose.ui.platform.LocalInspectionMode
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.sri.pokedex.core.designsystem.theme.LocalBackgroundTheme
-import com.sri.pokedex.core.designsystem.theme.PokedexColors
 import com.sri.pokedex.core.designsystem.theme.PokedexTheme
 import com.sri.pokedex.core.designsystem.utils.pxToDp
 
 @Composable
-fun PokedexProdressBar(
+fun PokedexProgressBar(
     modifier: Modifier = Modifier,
     @FloatRange(0.0,1.0) progress: Float,
     color: Color,
@@ -133,7 +129,7 @@ private fun PokedexProdressBarLightMode() {
             modifier = Modifier.height(120.dp),
             contentAlignment = Alignment.Center
         ){
-            PokedexProdressBar(
+            PokedexProgressBar(
                 progress = 0.1f,
                 color = PokedexTheme.colors.primary,
                 label = "100/300")
@@ -149,7 +145,7 @@ private fun PokedexProdressBarDarkMode() {
             modifier = Modifier.height(120.dp),
             contentAlignment = Alignment.Center
         ){
-            PokedexProdressBar(
+            PokedexProgressBar(
                 progress = 0.1f,
                 color = PokedexTheme.colors.primary,
                 label = "100/300")
@@ -165,7 +161,7 @@ private fun PokedexProdressBarTextInnerLightMode() {
             modifier = Modifier.height(120.dp),
             contentAlignment = Alignment.Center
         ){
-            PokedexProdressBar(
+            PokedexProgressBar(
                 progress = 0.5f,
                 color = PokedexTheme.colors.primary,
                 label = "100/300")
@@ -181,7 +177,7 @@ private fun PokedexProdressBarTextInnerDarkMode() {
             modifier = Modifier.height(120.dp),
             contentAlignment = Alignment.Center
         ){
-            PokedexProdressBar(
+            PokedexProgressBar(
                 progress = 0.5f,
                 color = PokedexTheme.colors.primary,
                 label = "100/300")

@@ -14,5 +14,6 @@ dependencies {
     implementation(projects.core.designsystem)
     implementation(projects.core.viewmodel)
     implementation(projects.core.data)
+    implementation(projects.core.navigation)
     compileOnly(projects.core.preview)
 }

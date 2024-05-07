@@ -4,8 +4,8 @@ import androidx.compose.animation.SharedTransitionScope
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
 import com.sri.pokedex.core.navigation.PokedexScreens
-import com.sri.pokedex.fearure.home.Home
-import com.sri.pokedex.feature.detail.Details
+import com.sri.pokedex.fearure.home.PokedexHome
+import com.sri.pokedex.feature.detail.PokedexDetails
 
 context(SharedTransitionScope)
 fun NavGraphBuilder.pokemonNavigation(){
@@ -13,7 +13,7 @@ fun NavGraphBuilder.pokemonNavigation(){
     composable(
         route = PokedexScreens.Home.name
     ){
-        Home(
+        PokedexHome(
             this
         )
     }
@@ -22,6 +22,6 @@ fun NavGraphBuilder.pokemonNavigation(){
         route = PokedexScreens.Detail.name,
         arguments = PokedexScreens.Detail.navArguments
     ){
-        Details(this)
+        PokedexDetails(this)
     }
 }

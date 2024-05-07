@@ -9,7 +9,9 @@ import com.sri.pokedex.navigation.PokedexNavHost
 
 
 @Composable
-internal fun PokedexMain(composeNavigator: AppComposeNavigator) {
+fun PokedexMain(
+    composeNavigator: AppComposeNavigator
+) {
 
     PokedexTheme {
         val navController = rememberNavController()

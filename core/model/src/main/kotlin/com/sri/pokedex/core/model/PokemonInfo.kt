@@ -22,7 +22,7 @@ data class PokemonInfo(
     val stats: List<StatsResponse>,
     @field:Json(name = "types")
     val types: List<TypesResponse>,
-    val exp: Int = MAX_EXP
+    val exp: Int = Random.nextInt(MAX_EXP)
 ) {
 
     val hp: Int by lazy {
@@ -38,12 +38,21 @@ data class PokemonInfo(
         stats.firstOrNull { it.stat.name == "speed" }?.baseStat ?: Random.nextInt(MAX_SPEED)
     }
 
+    fun getIdString(): String = String.format("#%03d", id)
+    fun getWeightString(): String = String.format("%.1f KG", weight.toFloat() / 10)
+    fun getHeightString(): String = String.format("%.1f M", height.toFloat() / 10)
+    fun getHpString(): String = " $hp/$MAX_HP"
+    fun getAttackString(): String = " $attack/$MAX_ATTACK"
+    fun getDefenseString(): String = " $defense/$MAX_DEFENSE"
+    fun getSpeedString(): String = " $speed/$MAX_SPEED"
+    fun getExpString(): String = " $exp/$MAX_EXP"
+
     @JsonClass(generateAdapter = true)
     data class TypesResponse(
         @field:Json(name = "slot")
         val slot: Int,
         @field:Json(name = "type")
-        val name: Type,
+        val type: Type,
     )
 
     @JsonClass(generateAdapter = true)

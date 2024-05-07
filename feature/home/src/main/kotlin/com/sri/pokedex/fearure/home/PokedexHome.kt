@@ -48,14 +48,16 @@ import com.sri.pokedex.core.data.repository.home.FakeHomeReopsitory
 import com.sri.pokedex.core.designsystem.component.PokedexAppbar
 import com.sri.pokedex.core.designsystem.component.PokedexCircularProgress
 import com.sri.pokedex.core.designsystem.component.PokedexText
+import com.sri.pokedex.core.designsystem.component.pokedexSharedElement
 import com.sri.pokedex.core.designsystem.theme.PokedexTheme
 import com.sri.pokedex.core.model.Pokemon
 import com.sri.pokedex.core.navigation.PokedexScreens
+import com.sri.pokedex.core.navigation.boundsTransform
 import com.sri.pokedex.core.navigation.currentComposeNavigator
 import com.sri.pokedex.core.preview.PreviewUtils
 
 @Composable
-fun SharedTransitionScope.Home(
+fun SharedTransitionScope.PokedexHome(
     animatedVisibilityScope: AnimatedVisibilityScope,
     viewModel: HomeViewModel = hiltViewModel()
 ) {
@@ -64,7 +66,7 @@ fun SharedTransitionScope.Home(
     PokedexTheme {
         Column {
             PokedexAppbar()
-            HomeContent(
+            PokedexHomeContent(
                 animatedVisibilityScope = animatedVisibilityScope,
                 pokemonList = pokemonList.value,
                 uiState = uiState.value,
@@ -75,7 +77,7 @@ fun SharedTransitionScope.Home(
 }
 
 @Composable
-private fun SharedTransitionScope.HomeContent(
+private fun SharedTransitionScope.PokedexHomeContent(
     animatedVisibilityScope: AnimatedVisibilityScope,
     pokemonList: List<Pokemon>,
     modifier: Modifier = Modifier,
@@ -91,7 +93,7 @@ private fun SharedTransitionScope.HomeContent(
                 if ((index + threadHold) >= pokemonList.size && uiState != HomeUiState.Loading) {
                     fetchNextPokemonList()
                 }
-                HomeCard(
+                PokedexHomeCard(
                     animatedVisibilityScope = animatedVisibilityScope,
                     pokemon = pokemon
                 )
@@ -105,11 +107,12 @@ private fun SharedTransitionScope.HomeContent(
 }
 
 @Composable
-private fun SharedTransitionScope.HomeCard(
+private fun SharedTransitionScope.PokedexHomeCard(
     animatedVisibilityScope: AnimatedVisibilityScope,
     pokemon: Pokemon,
     modifier: Modifier = Modifier
 ) {
+    val isLocalInspectionMode = LocalInspectionMode.current
     val currentNavigator = currentComposeNavigator
     var palette by remember { mutableStateOf<Palette?>(null) }
     val backgroundColor by palette.paletteBackgroundColor()
@@ -130,7 +133,13 @@ private fun SharedTransitionScope.HomeCard(
         GlideImage(
             modifier = modifier
                 .align(alignment = Alignment.CenterHorizontally)
-                .size(120.dp),
+                .size(120.dp)
+                .pokedexSharedElement(
+                    isLocalInspectionMode = isLocalInspectionMode,
+                    animatedVisibilityScope = animatedVisibilityScope,
+                    state = rememberSharedContentState(key = "image-${pokemon.imageUrl}"),
+                    boundsTransform = boundsTransform
+                ),
             imageModel = { pokemon.imageUrl },
             previewPlaceholder = painterResource(id = R.drawable.pokemon_preview),
             imageOptions = ImageOptions(contentScale = ContentScale.Inside),
@@ -166,6 +175,12 @@ private fun SharedTransitionScope.HomeCard(
                 .padding(
                     vertical = 4.dp
                 )
+                .pokedexSharedElement(
+                    isLocalInspectionMode = isLocalInspectionMode,
+                    animatedVisibilityScope = animatedVisibilityScope,
+                    state = rememberSharedContentState(key = "name-${pokemon.name}"),
+                    boundsTransform = boundsTransform
+                )
         )
     }
 }
@@ -176,7 +191,7 @@ private fun PokedexHomeLightPreview() {
     PokedexTheme {
         SharedTransitionScope {
             AnimatedVisibility(visible = true) {
-                Home(
+                PokedexHome(
                     animatedVisibilityScope = this,
                     viewModel = HomeViewModel(homeRepository = FakeHomeReopsitory())
                 )
@@ -191,7 +206,7 @@ private fun PokedexHomeDarkPreview() {
     PokedexTheme {
         SharedTransitionScope {
             AnimatedVisibility(visible = true) {
-                Home(
+                PokedexHome(
                     animatedVisibilityScope = this,
                     viewModel = HomeViewModel(homeRepository = FakeHomeReopsitory())
                 )
@@ -206,7 +221,7 @@ private fun PokedexHomeContentLightPreview() {
     PokedexTheme {
         SharedTransitionScope {
             AnimatedVisibility(visible = true) {
-                HomeContent(
+                PokedexHomeContent(
                     animatedVisibilityScope = this,
                     pokemonList = PreviewUtils.mockPokemonList(),
                     uiState = HomeUiState.Idle,
@@ -223,7 +238,7 @@ private fun PokedexHomeContentDarkPreview() {
     PokedexTheme {
         SharedTransitionScope {
             AnimatedVisibility(visible = true) {
-                HomeContent(
+                PokedexHomeContent(
                     animatedVisibilityScope = this,
                     pokemonList = PreviewUtils.mockPokemonList(),
                     uiState = HomeUiState.Idle,
@@ -240,7 +255,7 @@ private fun PokedexCardLightPreview() {
     PokedexTheme {
         SharedTransitionScope {
             AnimatedVisibility(visible = true) {
-                HomeCard(
+                PokedexHomeCard(
                     animatedVisibilityScope = this, pokemon = PreviewUtils.mockPokemon()
                 )
             }
@@ -254,7 +269,7 @@ private fun PokedexCardDarkPreview() {
     PokedexTheme {
         SharedTransitionScope {
             AnimatedVisibility(visible = true) {
-                HomeCard(
+                PokedexHomeCard(
                     animatedVisibilityScope = this, pokemon = PreviewUtils.mockPokemon()
                 )
             }

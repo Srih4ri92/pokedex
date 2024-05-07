@@ -4,6 +4,7 @@ import com.skydoves.sandwich.ApiResponse
 import com.sri.pokedex.core.model.PokemonInfo
 import com.sri.pokedex.core.network.model.PokemonResponse
 import retrofit2.http.GET
+import retrofit2.http.Path
 import retrofit2.http.Query
 
 interface PokedexService {
@@ -16,7 +17,7 @@ interface PokedexService {
 
     @GET("pokemon/{name}")
     suspend fun fetchPokemonDetail(
-        @Query("name") name: String,
+        @Path("name") name: String,
     ):ApiResponse<PokemonInfo>
 
 }

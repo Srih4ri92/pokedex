@@ -1,8 +1,11 @@
 package com.sri.pokedex.core.data.repository.detail
 
+import android.util.Log
 import com.skydoves.sandwich.map
+import com.skydoves.sandwich.message
 import com.skydoves.sandwich.onError
 import com.skydoves.sandwich.onException
+import com.skydoves.sandwich.onFailure
 import com.skydoves.sandwich.suspendOnSuccess
 import com.sri.pokedex.core.database.PokemonInfoDao
 import com.sri.pokedex.core.database.entity.mapper.asDomain
@@ -23,6 +26,8 @@ class DetailRepositoryImpl @Inject constructor(
     @Dispatcher(PokedexAppDispatchers.IO) private val dispatcher: CoroutineDispatcher
 ) : DetailRepository {
 
+    private val TAG: String =  "DetailRepository"
+
     override suspend fun fetchPokemonInfo(
         name: String,
         onComplete: () -> Unit,
@@ -37,8 +42,10 @@ class DetailRepositoryImpl @Inject constructor(
                 pokemonInfoDao.insertPokemonInfo(data.asEntity())
                 emit(data)
             }.onError {
+                Log.e(TAG, "fetchPokemonInfo: ${this.message()}")
                 map(ErrorResponseMapper) { onError("[Code: ${code}]: $message") }
             }.onException {
+                Log.e(TAG, "fetchPokemonInfo: ${this.message()}")
                 onError(message)
             }
         }else{

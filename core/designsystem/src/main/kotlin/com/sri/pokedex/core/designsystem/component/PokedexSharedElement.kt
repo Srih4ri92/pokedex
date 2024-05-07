@@ -23,9 +23,9 @@ fun Modifier.pokedexSharedElement(
     renderInOverlayDuringTransition: Boolean = true,
     zIndexInOverlay: Float = 0f,
     clipInOverlayDuringTransition: SharedTransitionScope.OverlayClip = ParentClip,
-){
+): Modifier{
 
-    if(isLocalInspectionMode){
+    return if(isLocalInspectionMode){
         this
     }else{
         this.sharedElement(
