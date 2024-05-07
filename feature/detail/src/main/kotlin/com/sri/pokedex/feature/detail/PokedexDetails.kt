@@ -65,10 +65,6 @@ fun SharedTransitionScope.PokedexDetails(
     val uiState by detailsViewModel.uiState.collectAsStateWithLifecycle()
     val pokemonInfo by detailsViewModel.pokemonInfo.collectAsStateWithLifecycle()
     val pokemon by detailsViewModel.pokemon.collectAsStateWithLifecycle()
-    val id by remember {
-        mutableStateOf("")
-    }
-
     Column(
         modifier = Modifier
             .fillMaxSize(),
