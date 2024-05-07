@@ -3,7 +3,6 @@ package com.sri.pokedex.feature.detail
 import androidx.annotation.FloatRange
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Immutable
-import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import com.sri.pokedex.compose.designsystem.R
@@ -15,7 +14,7 @@ import kotlinx.collections.immutable.persistentListOf
 @Immutable
 internal data class PokedexStatus(
     val type: String,
-    @FloatRange(0.0,1.0) val progress: Float,
+    @FloatRange(0.0, 1.0) val progress: Float,
     val color: Color,
     val label: String
 )

@@ -46,7 +46,6 @@ import com.skydoves.landscapist.palette.PalettePlugin
 import com.sri.pokedex.compose.designsystem.R
 import com.sri.pokedex.core.data.repository.detail.FakeDetailRepository
 import com.sri.pokedex.core.designsystem.component.PokedexCircularProgress
-import com.sri.pokedex.core.designsystem.component.PokedexProgressBar
 import com.sri.pokedex.core.designsystem.component.PokedexText
 import com.sri.pokedex.core.designsystem.component.pokedexSharedElement
 import com.sri.pokedex.core.designsystem.theme.PokedexTheme
@@ -66,6 +65,9 @@ fun SharedTransitionScope.PokedexDetails(
     val uiState by detailsViewModel.uiState.collectAsStateWithLifecycle()
     val pokemonInfo by detailsViewModel.pokemonInfo.collectAsStateWithLifecycle()
     val pokemon by detailsViewModel.pokemon.collectAsStateWithLifecycle()
+    val id by remember {
+        mutableStateOf("")
+    }
 
     Column(
         modifier = Modifier
@@ -77,14 +79,14 @@ fun SharedTransitionScope.PokedexDetails(
             pokemonInfo = pokemonInfo
         )
 
-        if(uiState == DetailsUiState.Idle && pokemonInfo != null) {
+        if (uiState == DetailsUiState.Idle && pokemonInfo != null) {
             PokedexDetailsInfo(pokemonInfo = pokemonInfo!!)
             PokedexDetailsStats(pokemonInfo = pokemonInfo!!)
-        }else{
+        } else {
             Box(
                 modifier = Modifier
-                .fillMaxSize()
-            ){
+                    .fillMaxSize()
+            ) {
                 PokedexCircularProgress()
             }
         }
@@ -149,7 +151,7 @@ private fun SharedTransitionScope.PokedexDetailsHeader(
             color = PokedexTheme.colors.absoluteWhite,
             fontWeight = FontWeight.Bold,
             fontSize = 18.sp,
-            text = ""
+            text = pokemonInfo?.getIdString().orEmpty()
         )
         GlideImage(
             imageModel = { pokemon?.imageUrl },
@@ -251,7 +253,7 @@ private fun PokedexDetailsInfo(
 private fun PokedexDetailsStats(
     pokemonInfo: PokemonInfo
 ) {
-    Column{
+    Column {
         pokemonInfo.toPokedexStatusList().forEach { pokemonStatus ->
             PokedexStatItem(
                 modifier = Modifier.padding(bottom = 16.dp),
