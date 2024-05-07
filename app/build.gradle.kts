@@ -56,6 +56,8 @@ dependencies {
     
     implementation(projects.core.designsystem)
     implementation(projects.feature.home)
+    implementation(projects.feature.detail)
+    implementation(projects.core.navigation)
 
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)

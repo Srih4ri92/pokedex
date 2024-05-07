@@ -16,5 +16,6 @@ dependencies {
     implementation(projects.core.model)
     implementation(projects.core.data)
     implementation(projects.core.preview)
+    implementation(projects.core.navigation)
 
 }

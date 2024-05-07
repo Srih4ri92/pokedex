@@ -50,17 +50,18 @@ import com.sri.pokedex.core.designsystem.component.PokedexCircularProgress
 import com.sri.pokedex.core.designsystem.component.PokedexText
 import com.sri.pokedex.core.designsystem.theme.PokedexTheme
 import com.sri.pokedex.core.model.Pokemon
+import com.sri.pokedex.core.navigation.PokedexScreens
+import com.sri.pokedex.core.navigation.currentComposeNavigator
 import com.sri.pokedex.core.preview.PreviewUtils
 
 @Composable
 fun SharedTransitionScope.Home(
     animatedVisibilityScope: AnimatedVisibilityScope,
-    viewModel: HomeViewModel = hiltViewModel(),
-    modifier: Modifier = Modifier
+    viewModel: HomeViewModel = hiltViewModel()
 ) {
     val uiState = viewModel.uiState.collectAsStateWithLifecycle()
     val pokemonList = viewModel.pokemonList.collectAsStateWithLifecycle()
-    PokedexTheme{
+    PokedexTheme {
         Column {
             PokedexAppbar()
             HomeContent(
@@ -86,7 +87,7 @@ private fun SharedTransitionScope.HomeContent(
         modifier = modifier.fillMaxSize()
     ) {
         LazyVerticalGrid(columns = GridCells.Fixed(2)) {
-            itemsIndexed(pokemonList) { index,pokemon ->
+            itemsIndexed(pokemonList) { index, pokemon ->
                 if ((index + threadHold) >= pokemonList.size && uiState != HomeUiState.Loading) {
                     fetchNextPokemonList()
                 }
@@ -109,13 +110,14 @@ private fun SharedTransitionScope.HomeCard(
     pokemon: Pokemon,
     modifier: Modifier = Modifier
 ) {
+    val currentNavigator = currentComposeNavigator
     var palette by remember { mutableStateOf<Palette?>(null) }
     val backgroundColor by palette.paletteBackgroundColor()
     Card(
         modifier = modifier
             .fillMaxWidth()
             .padding(6.dp),
-        onClick = { /*TODO*/ },
+        onClick = { currentNavigator.navigate(PokedexScreens.Detail.createRoute(pokemon)) },
         elevation = CardDefaults.cardElevation(4.dp),
         shape = RoundedCornerShape(16.dp),
         colors = CardColors(
@@ -141,7 +143,7 @@ private fun SharedTransitionScope.HomeCard(
                     ),
                 )
 
-                if(!LocalInspectionMode.current){
+                if (!LocalInspectionMode.current) {
                     +PalettePlugin(
                         imageModel = pokemon.imageUrl,
                         useCache = true,
